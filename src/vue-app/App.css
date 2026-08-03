@@ -14,8 +14,11 @@
 .logo:hover {
 	filter: drop-shadow(0 0 2em #646cffaa);
 }
-.logo.react:hover {
-	filter: drop-shadow(0 0 2em #61dafbaa);
+.logo.vue:hover {
+	filter: drop-shadow(0 0 2em #42b883aa);
+}
+.logo.hono:hover {
+	filter: drop-shadow(0 0 2em #f96302aa);
 }
 .logo.cloudflare:hover {
 	filter: drop-shadow(0 0 2em #f6821faa);

@@ -13,14 +13,18 @@
 		"isolatedModules": true,
 		"moduleDetection": "force",
 		"noEmit": true,
-		"jsx": "react-jsx",
+		"jsx": "preserve",
+		"jsxImportSource": "vue",
 
 		/* Linting */
 		"strict": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
 		"noFallthroughCasesInSwitch": true,
-		"noUncheckedSideEffectImports": true
+		"noUncheckedSideEffectImports": true,
+
+		/* Vue */
+		"types": ["vite/client"]
 	},
-	"include": ["src/react-app"]
+	"include": ["src/vue-app/**/*.ts", "src/vue-app/**/*.vue", "src/vue-app/**/*.d.ts"]
 }
