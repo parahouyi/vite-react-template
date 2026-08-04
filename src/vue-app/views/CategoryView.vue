@@ -1,18 +1,27 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
-import { useRoute } from "vue-router";
+import { computed, onMounted, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { fetchArticles, fetchCategories } from "../api/articles";
 import type { Article, Category } from "../api/types";
 import ArticleCard from "../components/ArticleCard.vue";
+import Pagination from "../components/Pagination.vue";
 import { useMeta } from "../composables/useMeta";
 
 const route = useRoute();
+const router = useRouter();
 
 const articles = ref<Article[]>([]);
 const categories = ref<Category[]>([]);
 const category = ref<Category | null>(null);
 const loading = ref(true);
 const error = ref<string | null>(null);
+const totalPages = ref(1);
+const total = ref(0);
+
+const currentPage = computed(() => {
+	const p = Number(route.query.page);
+	return Number.isInteger(p) && p >= 1 ? p : 1;
+});
 
 useMeta(() => ({
 	title: category.value ? `${category.value.name} 分类` : "分类",
@@ -27,13 +36,19 @@ async function load() {
 	const slug = String(route.params.slug);
 	try {
 		const [articlesData, categoriesData] = await Promise.all([
-			fetchArticles({ category: slug, limit: 50 }),
+			fetchArticles({
+				category: slug,
+				page: currentPage.value,
+				limit: 12,
+			}),
 			fetchCategories(),
 		]);
 		articles.value = articlesData.articles;
 		categories.value = categoriesData.categories;
 		category.value =
 			categoriesData.categories.find((c) => c.slug === slug) ?? null;
+		totalPages.value = articlesData.pagination.totalPages;
+		total.value = articlesData.pagination.total;
 	} catch (e) {
 		error.value = e instanceof Error ? e.message : "加载失败";
 	} finally {
@@ -41,7 +56,18 @@ async function load() {
 	}
 }
 
-watch(() => route.params.slug, load);
+function onPageChange(page: number) {
+	router.push({ query: { ...route.query, page: String(page) } });
+	window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+watch(() => [route.params.slug, route.query.page], load, { immediate: false });
+watch(
+	() => route.params.slug,
+	() => {
+		router.replace({ query: {} });
+	},
+);
 onMounted(load);
 </script>
 
@@ -101,6 +127,13 @@ onMounted(load);
 				，或在后台发布新文章。
 			</p>
 		</div>
+
+		<Pagination
+			v-if="!loading && category && totalPages > 1"
+			:current-page="currentPage"
+			:total-pages="totalPages"
+			@change="onPageChange"
+		/>
 	</section>
 </template>
 
