@@ -675,6 +675,49 @@ admin.get("/comments", async (c) => {
 	return c.json({ comments: results ?? [] });
 });
 
+admin.put("/password", async (c) => {
+	const db = c.env.simon_blog_db;
+	const me = c.get("admin");
+	const body = await parseJsonBody<{
+		old_password?: string;
+		new_password?: string;
+	}>(c);
+	if (!body) return c.json({ error: "Invalid JSON" }, 400);
+
+	const oldPw = String(body.old_password ?? "");
+	const newPw = String(body.new_password ?? "");
+
+	if (!oldPw || !newPw) {
+		return c.json({ error: "请填写旧密码和新密码" }, 400);
+	}
+	if (newPw.length < 8) {
+		return c.json({ error: "新密码至少 8 个字符" }, 400);
+	}
+	if (newPw.length > 100) {
+		return c.json({ error: "新密码过长（最多 100 字符）" }, 400);
+	}
+	if (oldPw === newPw) {
+		return c.json({ error: "新密码不能与旧密码相同" }, 400);
+	}
+
+	const record = await db
+		.prepare("SELECT password_hash FROM admins WHERE id = ?")
+		.bind(Number(me.sub))
+		.first<{ password_hash: string }>();
+	if (!record) return c.json({ error: "账户不存在" }, 404);
+
+	const ok = await bcrypt.compare(oldPw, record.password_hash);
+	if (!ok) return c.json({ error: "旧密码错误" }, 401);
+
+	const newHash = await bcrypt.hash(newPw, 10);
+	await db
+		.prepare("UPDATE admins SET password_hash = ? WHERE id = ?")
+		.bind(newHash, Number(me.sub))
+		.run();
+
+	return c.json({ success: true });
+});
+
 app.route("/api/admin", admin);
 
 // ============================================================================

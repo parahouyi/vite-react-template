@@ -120,3 +120,13 @@ export function deleteComment(id: number) {
 		method: "DELETE",
 	});
 }
+
+export function changePassword(payload: {
+	old_password: string;
+	new_password: string;
+}) {
+	return api<{ success: boolean }>("/admin/password", {
+		method: "PUT",
+		body: payload,
+	});
+}

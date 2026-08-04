@@ -27,50 +27,52 @@ onMounted(async () => {
 </script>
 
 <template>
-	<section class="hero container">
-		<div class="hero-inner">
-			<span class="eyebrow">Hello, I'm Simon</span>
-			<h1>记录、思考、分享。</h1>
-			<p class="lede">
-				这里是 Simon 的个人博客 — 写技术笔记、项目心得与偶尔的随想。
-				希望这些文字对你有用。
-			</p>
-			<div class="cta">
-				<RouterLink to="/articles" class="btn btn-primary">浏览文章</RouterLink>
-				<RouterLink to="/about" class="btn btn-ghost">关于我</RouterLink>
-			</div>
-		</div>
-	</section>
-
-	<section class="articles-section container">
-		<header class="section-header">
-			<h2>最新文章</h2>
-			<RouterLink to="/articles" class="more">查看全部 →</RouterLink>
-		</header>
-
-		<div v-if="loading" class="grid">
-			<div v-for="i in 6" :key="i" class="skeleton-card">
-				<div class="skeleton-cover shimmer" />
-				<div class="skeleton-body">
-					<div class="skeleton-line short shimmer" />
-					<div class="skeleton-line shimmer" />
-					<div class="skeleton-line medium shimmer" />
+	<div class="home-view">
+		<section class="hero container">
+			<div class="hero-inner">
+				<span class="eyebrow">Hello, I'm Simon</span>
+				<h1>记录、思考、分享。</h1>
+				<p class="lede">
+					这里是 Simon 的个人博客 — 写技术笔记、项目心得与偶尔的随想。
+					希望这些文字对你有用。
+				</p>
+				<div class="cta">
+					<RouterLink to="/articles" class="btn btn-primary">浏览文章</RouterLink>
+					<RouterLink to="/about" class="btn btn-ghost">关于我</RouterLink>
 				</div>
 			</div>
-		</div>
+		</section>
 
-		<div v-else-if="error" class="state state--error">
-			加载失败：{{ error }}
-		</div>
+		<section class="articles-section container">
+			<header class="section-header">
+				<h2>最新文章</h2>
+				<RouterLink to="/articles" class="more">查看全部 →</RouterLink>
+			</header>
 
-		<div v-else-if="articles.length === 0" class="state">
-			还没有发布的文章，去 <RouterLink to="/login">登录</RouterLink> 写第一篇吧。
-		</div>
+			<div v-if="loading" class="grid">
+				<div v-for="i in 6" :key="i" class="skeleton-card">
+					<div class="skeleton-cover shimmer" />
+					<div class="skeleton-body">
+						<div class="skeleton-line short shimmer" />
+						<div class="skeleton-line shimmer" />
+						<div class="skeleton-line medium shimmer" />
+					</div>
+				</div>
+			</div>
 
-		<div v-else class="grid">
-			<ArticleCard v-for="a in articles" :key="a.id" :article="a" />
-		</div>
-	</section>
+			<div v-else-if="error" class="state state--error">
+				加载失败：{{ error }}
+			</div>
+
+			<div v-else-if="articles.length === 0" class="state">
+				还没有发布的文章，去 <RouterLink to="/login">登录</RouterLink> 写第一篇吧。
+			</div>
+
+			<div v-else class="grid">
+				<ArticleCard v-for="a in articles" :key="a.id" :article="a" />
+			</div>
+		</section>
+	</div>
 </template>
 
 <style scoped>

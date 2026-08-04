@@ -6,9 +6,9 @@ import AppFooter from "./components/AppFooter.vue";
 <template>
 	<AppHeader />
 	<main class="app-main">
-		<RouterView v-slot="{ Component }">
+		<RouterView v-slot="{ Component, route }">
 			<Transition name="fade" mode="out-in">
-				<component :is="Component" />
+				<component :is="Component" :key="route.fullPath" />
 			</Transition>
 		</RouterView>
 	</main>
@@ -24,13 +24,17 @@ import AppFooter from "./components/AppFooter.vue";
 .fade-enter-active,
 .fade-leave-active {
 	transition:
-		opacity var(--transition),
-		transform var(--transition);
+		opacity 180ms ease,
+		transform 180ms ease;
 }
 
-.fade-enter-from,
-.fade-leave-to {
+.fade-enter-from {
 	opacity: 0;
 	transform: translateY(8px);
+}
+
+.fade-leave-to {
+	opacity: 0;
+	transform: translateY(-8px);
 }
 </style>

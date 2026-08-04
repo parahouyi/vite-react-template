@@ -8,18 +8,20 @@ import {
 	watch,
 } from "vue";
 import { useRoute } from "vue-router";
-import { fetchArticleBySlug } from "../api/articles";
+import { fetchArticleBySlug, fetchArticles } from "../api/articles";
 import { renderMarkdown, type TocItem } from "../utils/markdown";
 import { calculateReadingTime } from "../utils/reading-time";
-import type { ArticleDetail } from "../api/types";
+import type { Article, ArticleDetail } from "../api/types";
 import TocSidebar from "../components/TocSidebar.vue";
 import CommentList from "../components/CommentList.vue";
 import ReadingProgress from "../components/ReadingProgress.vue";
+import ArticleCard from "../components/ArticleCard.vue";
 import { useMeta } from "../composables/useMeta";
 
 const route = useRoute();
 
 const article = ref<ArticleDetail | null>(null);
+const related = ref<Article[]>([]);
 const loading = ref(true);
 const error = ref<string | null>(null);
 const articleBody = ref<HTMLElement | null>(null);
@@ -56,6 +58,7 @@ async function load(slug: string) {
 	loading.value = true;
 	error.value = null;
 	article.value = null;
+	related.value = [];
 	activeId.value = "";
 	try {
 		const data = await fetchArticleBySlug(slug);
@@ -63,6 +66,15 @@ async function load(slug: string) {
 		await nextTick();
 		setupObserver();
 		window.scrollTo({ top: 0 });
+		if (data.article.category_slug) {
+			const relatedData = await fetchArticles({
+				category: data.article.category_slug,
+				limit: 4,
+			});
+			related.value = relatedData.articles.filter(
+				(a) => a.id !== data.article.id,
+			);
+		}
 	} catch (e) {
 		error.value = e instanceof Error ? e.message : "加载失败";
 	} finally {
@@ -169,6 +181,33 @@ onUnmounted(() => observer?.disconnect());
 				<RouterLink to="/articles" class="btn btn-ghost">所有文章 →</RouterLink>
 			</div>
 		</div>
+
+		<section
+			v-if="related.length > 0"
+			class="container related-section"
+		>
+			<header class="related-header">
+				<h3>
+					更多「
+					<span class="hl">{{ article.category_name }}</span>
+					」文章
+				</h3>
+				<RouterLink
+					v-if="article.category_slug"
+					:to="`/categories/${article.category_slug}`"
+					class="link"
+				>
+					查看分类 →
+				</RouterLink>
+			</header>
+			<div class="related-grid">
+				<ArticleCard
+					v-for="r in related"
+					:key="r.id"
+					:article="r"
+				/>
+			</div>
+		</section>
 
 		<div v-if="article" class="container-narrow comments-wrap">
 			<CommentList :article-id="article.id" />
@@ -319,6 +358,44 @@ h1 {
 	flex-wrap: wrap;
 }
 
+.related-section {
+	margin-top: var(--space-12);
+}
+
+.related-header {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: var(--space-4);
+	margin-bottom: var(--space-6);
+	padding-bottom: var(--space-4);
+	border-bottom: 1px solid var(--color-border-soft);
+}
+
+.related-header h3 {
+	font-size: 1.25rem;
+}
+
+.related-header .hl {
+	color: var(--color-accent);
+}
+
+.related-header .link {
+	font-size: 0.9375rem;
+	color: var(--color-text-soft);
+	font-weight: 500;
+}
+
+.related-header .link:hover {
+	color: var(--color-accent);
+}
+
+.related-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: var(--space-5);
+}
+
 .placeholder {
 	padding: var(--space-20) 0;
 	text-align: center;
@@ -353,6 +430,9 @@ h1 {
 		grid-template-columns: 1fr;
 		gap: var(--space-8);
 	}
+	.related-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
 }
 
 @media (max-width: 640px) {
@@ -364,6 +444,9 @@ h1 {
 	}
 	.dot:nth-child(odd) {
 		display: none;
+	}
+	.related-grid {
+		grid-template-columns: 1fr;
 	}
 }
 </style>

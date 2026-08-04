@@ -11,6 +11,7 @@ const nav = [
 	{ to: "/admin", label: "概览", icon: "home" },
 	{ to: "/admin/articles", label: "文章", icon: "doc" },
 	{ to: "/admin/comments", label: "评论", icon: "chat" },
+	{ to: "/admin/settings", label: "设置", icon: "gear" },
 ];
 
 const breadcrumb = computed(() => {
@@ -20,6 +21,7 @@ const breadcrumb = computed(() => {
 		"admin-article-new": "新建文章",
 		"admin-article-edit": "编辑文章",
 		"admin-comments": "评论",
+		"admin-settings": "设置",
 	};
 	return map[String(route.name ?? "")] ?? "";
 });
