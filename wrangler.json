@@ -1,9 +1,11 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "vite-react-template",
+	"name": "simon-blog",
 	"main": "./src/worker/index.ts",
 	"compatibility_date": "2025-10-08",
-	"compatibility_flags": ["nodejs_compat"],
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
 	"observability": {
 		"enabled": true
 	},
@@ -11,5 +13,17 @@
 	"assets": {
 		"directory": "./dist/client",
 		"not_found_handling": "single-page-application"
+	},
+	"d1_databases": [
+		{
+			"binding": "simon_blog_db",
+			"database_name": "simon-blog-db",
+			"database_id": "0970bad7-a2d2-4ce6-870d-ba912df2dee4",
+			"migrations_dir": "./migrations"
+		}
+	],
+	"r2_buckets": [],
+	"vars": {
+		"JWT_SECRET": "local-dev-secret-please-replace-in-production-32chars-min"
 	}
 }

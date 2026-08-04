@@ -12,12 +12,24 @@
 		"publish": true
 	},
 	"dependencies": {
+		"bcryptjs": "3.0.2",
+		"dayjs": "1.11.13",
+		"dompurify": "3.2.4",
+		"highlight.js": "11.11.1",
 		"hono": "4.11.1",
-		"vue": "3.5.13"
+		"jose": "6.0.11",
+		"marked": "15.0.7",
+		"marked-highlight": "2.2.1",
+		"ofetch": "1.4.1",
+		"pinia": "3.0.1",
+		"vue": "3.5.13",
+		"vue-router": "4.5.0"
 	},
 	"devDependencies": {
 		"@cloudflare/vite-plugin": "1.15.3",
 		"@eslint/js": "9.39.1",
+		"@types/bcryptjs": "2.4.6",
+		"@types/dompurify": "3.0.5",
 		"@types/node": "24.10.1",
 		"@vitejs/plugin-vue": "6.0.1",
 		"eslint": "9.39.2",
