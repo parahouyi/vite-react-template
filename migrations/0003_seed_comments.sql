@@ -1,7 +1,8 @@
 -- 0003_seed_comments.sql
 -- 示例评论（直接显示模式）
+-- 用 INSERT OR IGNORE 让迁移可重复执行（按 article_id+author_name+content 判重）
 
-INSERT INTO comments (article_id, parent_id, author_name, author_email, author_website, content, approved, created_at) VALUES
+INSERT OR IGNORE INTO comments (article_id, parent_id, author_name, author_email, author_website, content, approved, created_at) VALUES
   (
     1, NULL, '张小明', 'zhang@example.com', NULL,
     '写得很清晰！正好想搭一个类似的博客，参考价值很大 👍',

@@ -204,8 +204,13 @@ npm run check        # 类型检查 + 构建 + dry-run 部署
 npm run deploy
 
 # 数据库
+npm run db:migrate:local    # 把所有迁移应用到本地 D1
+npm run db:migrate:remote   # 把所有迁移应用到云端 D1
+npm run db:reset:local      # 重置本地 D1（删除 SQLite 文件 + 重新跑迁移）
+
+# 一次性查询
 npx wrangler d1 execute simon-blog-db --local --command="SELECT * FROM articles;"
-npx wrangler d1 execute simon-blog-db --remote --file=./migrations/0001_init_schema.sql
+npx wrangler d1 execute simon-blog-db --remote --command="SELECT slug, title FROM articles;"
 
 # 实时查看 Worker 日志（生产）
 npx wrangler tail
@@ -213,6 +218,8 @@ npx wrangler tail
 # 类型生成（更新 worker-configuration.d.ts）
 npm run cf-typegen
 ```
+
+> ⚠️ 每次加新迁移后记得跑 `npm run db:migrate:remote` 把数据同步到云端。Worker 代码 deploy 不等于 D1 数据 deploy。
 
 ## 📝 许可
 

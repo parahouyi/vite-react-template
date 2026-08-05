@@ -170,9 +170,11 @@ app.get("/api/articles", async (c) => {
 	}
 
 	if (search) {
-		where.push("(a.title LIKE ? OR a.excerpt LIKE ?)");
+		where.push(
+			"(a.title LIKE ? OR a.excerpt LIKE ? OR a.content LIKE ?)",
+		);
 		const like = `%${search}%`;
-		params.push(like, like);
+		params.push(like, like, like);
 	}
 
 	const whereSql = where.join(" AND ");

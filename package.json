@@ -50,7 +50,10 @@
 		"deploy": "wrangler deploy",
 		"dev": "vite",
 		"lint": "eslint .",
-		"preview": "npm run build && vite preview"
+		"preview": "npm run build && vite preview",
+		"db:migrate:local": "node scripts/db-migrate.js local",
+		"db:migrate:remote": "node scripts/db-migrate.js remote",
+		"db:reset:local": "node scripts/db-migrate.js local --reset"
 	},
 	"type": "module"
 }
